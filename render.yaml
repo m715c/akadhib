@@ -1,0 +1,15 @@
+# إعدادات النشر على Render.com
+# اربط المستودع من لوحة Render واختار "Blueprint" — راح يقرا هذا الملف تلقائياً.
+services:
+  - type: web
+    name: akadhib
+    runtime: node
+    plan: free
+    region: frankfurt          # أقرب منطقة للشرق الأوسط
+    buildCommand: npm ci --omit=dev
+    startCommand: npm start
+    healthCheckPath: /api/health
+    autoDeployTrigger: commit
+    envVars:
+      - key: NODE_VERSION
+        value: "22"

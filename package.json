@@ -1,0 +1,20 @@
+{
+  "name": "akadhib",
+  "version": "1.0.0",
+  "description": "لعبة الأجوبة الكاذبة - لعبة جماعية أونلاين باللهجة العراقية",
+  "main": "server/index.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node server/index.js",
+    "dev": "node --watch server/index.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "socket.io": "^4.7.5"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "private": true,
+  "license": "MIT"
+}

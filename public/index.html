@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#ffffff">
+<meta name="description" content="لعبة جماعية أونلاين باللهجة العراقية — اكتب جواب غلط واخدع أصحابك">
+<title>الأجوبة الكاذبة</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@400;500;600;700;800&family=Rubik:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/style.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='50' fill='%2358cc02'/><text x='50' y='72' font-size='56' text-anchor='middle'>🦊</text></svg>">
+</head>
+<body>
+
+<div class="bg-blobs" aria-hidden="true">
+  <span></span><span></span><span></span><span></span>
+</div>
+
+<div id="app">
+
+  <!-- ═══════════ الصفحة الرئيسية ═══════════ -->
+  <section class="screen active" id="screen-home">
+    <div class="home-hero">
+      <div class="mascot mascot-lg bounce" id="home-mascot"></div>
+      <h1 class="game-title">الأجوبة <span>الكاذبة</span></h1>
+      <p class="tagline">اكتب جواب غلط... واخدع الكل</p>
+    </div>
+
+    <div class="card">
+      <label class="field">
+        <span class="field-label">شنو اسمك؟</span>
+        <input id="input-name" type="text" maxlength="14" placeholder="اكتب اسمك المستعار" autocomplete="off">
+      </label>
+
+      <div class="field">
+        <span class="field-label">اختار شخصيتك</span>
+        <div class="avatar-picker" id="avatar-picker"></div>
+      </div>
+
+      <button class="btn btn-primary btn-lg" id="btn-create">سوّي غرفة جديدة</button>
+
+      <div class="divider"><span>أو</span></div>
+
+      <div class="join-row">
+        <input id="input-code" type="text" maxlength="6" placeholder="كود الغرفة" autocomplete="off" spellcheck="false">
+        <button class="btn btn-secondary" id="btn-join">دخول</button>
+      </div>
+      <p class="hint" id="home-hint"></p>
+    </div>
+
+    <div class="card rules-teaser">
+      <h3>شلون تنلعب؟</h3>
+      <ol class="rules-list">
+        <li><b>1</b> يطلع سؤال عن معلومة غريبة محد يعرفها</li>
+        <li><b>2</b> كل واحد يكتب جواب غلط يخدع بيه الباقين</li>
+        <li><b>3</b> تنخلط الأجوبة وياها الجواب الصحيح</li>
+        <li><b>4</b> صوّت للصح = نقطة، وينخدع بيك واحد = نقطة</li>
+      </ol>
+      <button class="rules-more" id="btn-rules">
+        <span id="rules-icon"></span>
+        اقرا القوانين الكاملة
+      </button>
+    </div>
+  </section>
+
+  <!-- ═══════════ القوانين الكاملة ═══════════ -->
+  <section class="screen rules-page" id="screen-rules">
+    <div class="topbar">
+      <button class="icon-btn" id="btn-rules-back" title="رجوع"></button>
+      <h2 style="flex:1;margin:0;">قوانين اللعبة</h2>
+    </div>
+
+    <div class="rule-block tinted-blue">
+      <div class="rule-head"><span id="ri-target"></span><h3>شنو الهدف؟</h3></div>
+      <p>اللعبة تعتمد على شغلتين: تخدع غيرك، وما تنخدع انته. كل سؤال جوابه الصحيح معلومة غريبة ونادرة، فالكل تقريباً ما يعرفها — وهنا تجي اللعبة: تكتب جواب غلط يبين مقنع، وتحاول تلكي الجواب الحقيقي وسط أجوبة أصحابك.</p>
+    </div>
+
+    <div class="rule-block">
+      <div class="rule-head"><span id="ri-users"></span><h3>الغرفة والانضمام</h3></div>
+      <p>أي واحد يسوي غرفة ويصير هو المضيف. يطلعله كود من 5 محارف ورابط مشاركة. الباقين يدخلون بالكود أو بالرابط — بس باسم مستعار، بدون تسجيل حساب ولا إيميل.</p>
+      <p>الغرفة تستوعب من 3 لين 8 لاعبين. المضيف بس اللي يكدر يبدي اللعبة ويغير الإعدادات.</p>
+    </div>
+
+    <div class="rule-block">
+      <div class="rule-head"><span id="ri-book"></span><h3>مسار الجولة</h3></div>
+      <p><b>1. اختيار الفئة —</b> كل جولة لاعب مختلف بالدور يختار فئة السؤال من 4 فئات. الدور يلف على الكل بالتسلسل.</p>
+      <p><b>2. كتابة الجواب الغلط —</b> يطلع السؤال للكل بنفس اللحظة، وعندك وكت محدد تكتب بيه جواب غلط يبين حقيقي.</p>
+      <p><b>3. التصويت —</b> تنخلط كل الأجوبة الغلط مع الجواب الصحيح بترتيب عشوائي وبدون أسماء، وتختار اللي تعتقده صح.</p>
+      <p><b>4. النتيجة —</b> ينكشف الجواب الصحيح، ومنو كتب أي جواب، ومنو انخدع بمنو، وتتحدث لوحة النقاط.</p>
+    </div>
+
+    <div class="rule-block tinted-green">
+      <div class="rule-head"><span id="ri-check"></span><h3>النقاط</h3></div>
+      <div class="score-table">
+        <div class="score-line">اخترت الجواب الصحيح<span class="pts">+1</span></div>
+        <div class="score-line">كل شخص ينخدع بجوابك<span class="pts">+1</span></div>
+        <div class="score-line">كتبت الجواب الصحيح بالصدفة<span class="pts">+1</span></div>
+        <div class="score-line">ما كتبت جواب بالوكت<span class="pts zero">0</span></div>
+      </div>
+      <p style="margin-top:16px">يعني لو 3 أشخاص انخدعوا بجوابك وانته لكيت الصح، تاخذ 4 نقاط بجولة وحدة.</p>
+    </div>
+
+    <div class="rule-block tinted-yellow">
+      <div class="rule-head"><span id="ri-bulb"></span><h3>حالات خاصة</h3></div>
+      <p><b>ما تكدر تصوت على جوابك.</b> اللعبة تمنعك تلقائياً.</p>
+      <p><b>جوابين متطابقين؟</b> يندمجون بخيار واحد، وكل واحد منكم ياخذ نقطة عن كل من انخدع.</p>
+      <p><b>كتبت الجواب الصحيح بالصدفة؟</b> تاخذ نقطة، وجوابك ما ينضاف للقائمة.</p>
+      <p><b>ما كتبت بالوكت؟</b> ياخذ جوابك التلقائي مكانك، بس ما ينطيك نقاط حتى لو انخدع بيه أحد.</p>
+      <p><b>انقطع الإنترنت؟</b> حدّث الصفحة وترجع لنفس مكانك بنفس نقاطك. وإذا طلع المضيف، الصلاحية تنتقل تلقائياً للاعب ثاني.</p>
+    </div>
+
+    <div class="rule-block">
+      <div class="rule-head"><span id="ri-pen"></span><h3>نصايح تفوز بيها</h3></div>
+      <ul class="tip-list">
+        <li>خلي جوابك بنفس أسلوب الأجوبة الحقيقية — لو السؤال يسأل عن رقم، اكتب رقم قريب ومعقول.</li>
+        <li>لا تكتب شي مضحك زيادة، الأجوبة المبالغ بيها محد يصدكها ومحد يصوت لها.</li>
+        <li>لا تكتب اسمك أو شي يدل عليك، الأجوبة تنعرض بدون أسماء وهذا صالحك.</li>
+        <li>وقت التصويت، الجواب اللي يبين "مصنوع بعناية" غالباً كذبة — الحقيقة عادة أغرب.</li>
+        <li>لو ضيعت الوكت بالكتابة، أي جواب أحسن من لا شي: الفارغ ما ينطي ولا نقطة.</li>
+      </ul>
+    </div>
+
+    <div class="rule-block">
+      <div class="rule-head"><span id="ri-clock"></span><h3>الأوقات وعدد الجولات</h3></div>
+      <p>عدد الجولات الافتراضي = عدد اللاعبين، حتى كل واحد ياخذ دور اختيار الفئة مرة وحدة.</p>
+      <p>المضيف يكدر يزيد الجولات ويعدل وكت الكتابة والتصويت من إعدادات اللوبي قبل ما تبدي اللعبة.</p>
+    </div>
+
+    <button class="btn btn-primary btn-lg" id="btn-rules-close">فهمت، يلا نلعب</button>
+  </section>
+
+  <!-- ═══════════ اللوبي ═══════════ -->
+  <section class="screen" id="screen-lobby">
+    <div class="topbar">
+      <button class="icon-btn" id="btn-leave-lobby" title="طلعة"></button>
+      <div class="room-code-box">
+        <span class="rc-label">كود الغرفة</span>
+        <strong class="rc-code" id="lobby-code">-----</strong>
+      </div>
+      <button class="icon-btn" id="btn-copy-link" title="انسخ الرابط"></button>
+    </div>
+
+    <div class="card lobby-card">
+      <div class="lobby-head">
+        <div class="mascot mascot-sm wiggle" id="lobby-mascot"></div>
+        <div>
+          <h2 id="lobby-title">بانتظار اللاعبين...</h2>
+          <p class="muted" id="lobby-sub">شارك الكود مع أصحابك</p>
+        </div>
+      </div>
+
+      <div class="players-grid" id="lobby-players"></div>
+
+      <div class="host-settings" id="host-settings" hidden>
+        <h3>إعدادات اللعبة</h3>
+        <label class="setting-row">
+          <span>عدد الجولات</span>
+          <div class="stepper">
+            <button data-step="-1" data-key="rounds" type="button">−</button>
+            <b id="set-rounds">تلقائي</b>
+            <button data-step="1" data-key="rounds" type="button">+</button>
+          </div>
+        </label>
+        <label class="setting-row">
+          <span>وكت كتابة الجواب</span>
+          <div class="stepper">
+            <button data-step="-5" data-key="bluffSeconds" type="button">−</button>
+            <b id="set-bluff">35 ث</b>
+            <button data-step="5" data-key="bluffSeconds" type="button">+</button>
+          </div>
+        </label>
+        <label class="setting-row">
+          <span>وكت التصويت</span>
+          <div class="stepper">
+            <button data-step="-5" data-key="voteSeconds" type="button">−</button>
+            <b id="set-vote">25 ث</b>
+            <button data-step="5" data-key="voteSeconds" type="button">+</button>
+          </div>
+        </label>
+      </div>
+
+      <button class="btn btn-primary btn-lg" id="btn-start">يلا نبدي</button>
+      <p class="hint center" id="lobby-hint"></p>
+    </div>
+  </section>
+
+  <!-- ═══════════ اختيار الفئة ═══════════ -->
+  <section class="screen" id="screen-category">
+    <div class="phase-head">
+      <span class="round-pill" id="cat-round">الجولة 1</span>
+      <div class="pbar"><i id="cat-pbar"></i></div>
+      <div class="timer-mini" id="cat-timer"></div>
+    </div>
+    <div class="chooser-banner">
+      <div class="mascot mascot-sm" id="cat-mascot"></div>
+      <h2 id="cat-title">دورك تختار الفئة</h2>
+    </div>
+    <div class="category-grid" id="category-grid"></div>
+    <p class="hint center" id="cat-hint"></p>
+  </section>
+
+  <!-- ═══════════ عرض السؤال ═══════════ -->
+  <section class="screen center-screen" id="screen-intro">
+    <div class="intro-cat" id="intro-cat"></div>
+    <div class="card question-card big" id="intro-question"></div>
+    <p class="intro-note">جهّز كذبتك...</p>
+  </section>
+
+  <!-- ═══════════ كتابة الجواب الغلط ═══════════ -->
+  <section class="screen" id="screen-bluff">
+    <div class="phase-head">
+      <span class="round-pill" id="bluff-round">الجولة 1</span>
+      <div class="pbar"><i id="bluff-pbar"></i></div>
+      <div class="submit-counter" id="bluff-counter"></div>
+    </div>
+
+    <div class="timer-wrap">
+      <div class="hourglass" id="bluff-glass"></div>
+      <div class="pbar timer" id="bluff-timerbar"><i></i></div>
+      <div class="timer-num" id="bluff-timer">35</div>
+    </div>
+
+    <div class="question-card" id="bluff-question"></div>
+
+    <div class="bluff-input-wrap">
+      <input id="input-bluff" type="text" maxlength="70" placeholder="اكتب جواب غلط مقنع..." autocomplete="off">
+      <p class="char-count" id="bluff-count">0 / 70</p>
+      <button class="btn btn-primary" id="btn-bluff">إرسال الجواب</button>
+    </div>
+    <p class="hint center" id="bluff-hint">خلي جوابك يشبه الحقيقة عشان ينخدعون بيك</p>
+
+    <div class="waiting-box" id="bluff-waiting" hidden>
+      <div class="mascot mascot-sm wiggle" id="bluff-mascot"></div>
+      <p>وصل جوابك! ننتظر الباقين...</p>
+      <div class="your-answer" id="bluff-your"></div>
+    </div>
+  </section>
+
+  <!-- ═══════════ التصويت ═══════════ -->
+  <section class="screen" id="screen-voting">
+    <div class="phase-head">
+      <span class="round-pill" id="vote-round">الجولة 1</span>
+      <div class="pbar"><i id="vote-pbar"></i></div>
+      <div class="submit-counter" id="vote-counter"></div>
+    </div>
+
+    <div class="timer-wrap">
+      <div class="hourglass" id="vote-glass"></div>
+      <div class="pbar timer" id="vote-timerbar"><i></i></div>
+      <div class="timer-num" id="vote-timer">25</div>
+    </div>
+
+    <div class="question-card" id="vote-question"></div>
+    <p class="vote-prompt">أي واحد هو الجواب الصحيح؟</p>
+    <div class="answers-list" id="answers-list"></div>
+    <p class="hint center" id="vote-hint"></p>
+  </section>
+
+  <!-- ═══════════ نتيجة الجولة ═══════════ -->
+  <section class="screen" id="screen-reveal">
+    <div class="phase-head">
+      <span class="round-pill" id="reveal-round">الجولة 1</span>
+      <div class="pbar"><i id="reveal-pbar"></i></div>
+      <div class="timer-mini" id="reveal-timer"></div>
+    </div>
+
+    <div class="truth-card">
+      <span class="truth-label"><span id="truth-icon"></span> الجواب الصحيح</span>
+      <h2 id="reveal-correct"></h2>
+      <p class="truth-q" id="reveal-question"></p>
+    </div>
+
+    <p class="section-title">شنو صار بالجولة</p>
+    <div class="reveal-list" id="reveal-list"></div>
+
+    <p class="section-title">لوحة النقاط</p>
+    <div class="scoreboard" id="reveal-scores"></div>
+    <button class="btn btn-secondary" id="btn-skip" hidden style="margin-top:16px">الجولة الجاية</button>
+  </section>
+
+  <!-- ═══════════ النهاية ═══════════ -->
+  <section class="screen" id="screen-final">
+    <div class="final-head">
+      <div class="mascot mascot-lg party" id="final-mascot"></div>
+      <h1 class="game-title sm">انتهت اللعبة</h1>
+      <p class="winner-line" id="winner-line"></p>
+    </div>
+    <div class="podium" id="podium"></div>
+    <div class="scoreboard final" id="final-scores"></div>
+    <div class="final-actions">
+      <button class="btn btn-primary btn-lg" id="btn-again">العب مرة ثانية</button>
+      <button class="btn btn-ghost" id="btn-exit">طلعة للرئيسية</button>
+    </div>
+    <p class="hint center" id="final-hint"></p>
+  </section>
+
+</div>
+
+<div class="toast-stack" id="toasts"></div>
+
+<div class="overlay" id="overlay" hidden>
+  <div class="overlay-box">
+    <div class="mascot mascot-sm" id="overlay-mascot"></div>
+    <p id="overlay-text">جاري الاتصال...</p>
+  </div>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/art.js"></script>
+<script src="/js/app.js"></script>
+</body>
+</html>
