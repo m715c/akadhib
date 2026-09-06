@@ -46,7 +46,11 @@ sudo bash setup.sh game.example.com     # مع دومين + SSL تلقائي
 
 ### 2. Render — الأسهل (بدون بطاقة نهائياً)
 
-المستودع فيه [`render.yaml`](render.yaml) جاهز:
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/m715c/akadhib)
+
+اضغط الزر فوق، سجل دخول بحساب GitHub، واضغط **Apply**. المستودع فيه [`render.yaml`](render.yaml) جاهز فما تحتاج تعدل أي شي.
+
+الطريقة اليدوية:
 
 1. ادخل [dashboard.render.com](https://dashboard.render.com) وسجل دخول بحساب GitHub.
 2. **New → Blueprint** → اختار مستودع `akadhib` → **Apply**.
