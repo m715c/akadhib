@@ -1,0 +1,11 @@
+# سكربتات الصدفة وملفات الإعداد لازم تضل LF وإلا ما تشتغل على لينكس
+*.sh        text eol=lf
+Dockerfile  text eol=lf
+Caddyfile   text eol=lf
+*.yml       text eol=lf
+*.yaml      text eol=lf
+*.json      text eol=lf
+*.js        text eol=lf
+*.css       text eol=lf
+*.html      text eol=lf
+*.md        text eol=lf
