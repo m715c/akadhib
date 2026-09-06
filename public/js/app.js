@@ -70,11 +70,10 @@
     }, ms);
   }
 
-  function overlay(show, text, mood = 'think') {
+  function overlay(show, text) {
     const o = $('#overlay');
     if (show) {
       $('#overlay-text').textContent = text || '...';
-      $('#overlay-mascot').innerHTML = Art.mascot(mood);
       o.hidden = false;
     } else {
       o.hidden = true;
@@ -82,7 +81,7 @@
   }
 
   function avatarOf(player) {
-    return Art.avatarSVG(player && player.avatar);
+    return Art.avatarSVG(player && player.avatar, player && player.name);
   }
 
   function playerById(id) {
@@ -158,8 +157,9 @@
     const wrap = $('#avatar-picker');
     wrap.innerHTML = '';
     if (!app.avatar) app.avatar = Art.AVATAR_KEYS[Math.floor(Math.random() * Art.AVATAR_KEYS.length)];
+    const typed = $('#input-name').value.trim() || app.name || '';
     Art.AVATAR_KEYS.forEach(key => {
-      const b = el('button', 'avatar-opt' + (key === app.avatar ? ' selected' : ''), Art.avatarSVG(key));
+      const b = el('button', 'avatar-opt' + (key === app.avatar ? ' selected' : ''), Art.avatarSVG(key, typed));
       b.type = 'button';
       b.dataset.avatar = key;
       b.addEventListener('click', () => {
@@ -197,7 +197,6 @@
   }
 
   function initHome() {
-    $('#home-mascot').innerHTML = Art.mascot('sneaky');
     paintStaticIcons();
     buildAvatarPicker();
     $('#input-name').value = app.name || '';
@@ -230,7 +229,7 @@
 
   function readName() {
     const name = $('#input-name').value.trim();
-    if (!name) { homeError('اكتب اسمك أول 🙂'); $('#input-name').focus(); return null; }
+    if (!name) { homeError('اكتب اسمك أول'); $('#input-name').focus(); return null; }
     app.name = name;
     prefs.set('name', name);
     return name;
@@ -265,7 +264,7 @@
     app.socket.on('disconnect', () => {
       app.connected = false;
       stopTicking();
-      if (app.roomCode) overlay(true, 'انقطع الاتصال... نحاول نرجع 🔌', 'sad');
+      if (app.roomCode) overlay(true, 'انقطع الاتصال... نحاول نرجع');
     });
 
     app.socket.on('connect_error', () => {
@@ -314,7 +313,6 @@
   /* ---------- اللوبي ---------- */
   function renderLobby(s) {
     $('#lobby-code').textContent = s.code;
-    $('#lobby-mascot').innerHTML = Art.mascot('happy');
 
     const grid = $('#lobby-players');
     grid.innerHTML = '';
@@ -358,8 +356,7 @@
     $('#cat-round').textContent = `الجولة ${AR_NUM(s.round)}/${AR_NUM(s.totalRounds)}`;
     const c = s.category || { choices: [] };
     const mine = c.isYourTurn;
-    $('#cat-mascot').innerHTML = Art.mascot(mine ? 'happy' : 'think');
-    $('#cat-title').textContent = mine ? 'دورك! اختار الفئة 🎯' : `${c.chooserName} يختار الفئة...`;
+    $('#cat-title').textContent = mine ? 'دورك! اختار الفئة' : `${c.chooserName} يختار الفئة...`;
 
     const grid = $('#category-grid');
     grid.innerHTML = '';
@@ -367,7 +364,10 @@
       const card = el('button', 'cat-card' + (mine ? '' : ' locked'));
       card.type = 'button';
       card.style.animationDelay = (i * 60) + 'ms';
-      card.innerHTML = Art.categoryIcon(cat.icon) + `<div class="cname">${esc(cat.name)}</div>`;
+      const st = Art.categoryStyle(cat.icon);
+      card.style.setProperty('--accent', st.accent);
+      card.style.setProperty('--tint', st.tint);
+      card.innerHTML = '<span class="cat-bar"></span>' + `<div class="cname">${esc(cat.name)}</div>`;
       if (mine) {
         card.addEventListener('click', () => {
           $$('.cat-card').forEach(x => x.classList.add('locked'));
@@ -380,13 +380,15 @@
       grid.appendChild(card);
     });
 
-    $('#cat-hint').textContent = mine ? 'اختار بسرعة قبل ما يخلص الوكت!' : 'استرخي شوية 😌';
+    $('#cat-hint').textContent = mine ? 'اختار بسرعة قبل ما يخلص الوكت!' : 'استنى شوية...';
   }
 
   /* ---------- عرض السؤال ---------- */
   function renderIntro(s) {
     const q = s.question || {};
-    $('#intro-cat').innerHTML = Art.categoryIcon(q.icon) + `<div class="label">${esc(q.category || '')}</div>`;
+    const ist = Art.categoryStyle(q.icon);
+    $('#intro-cat').innerHTML =
+      `<span class="cat-chip" style="background:${ist.tint};color:${ist.accent}">${esc(q.category || '')}</span>`;
     $('#intro-question').textContent = q.text || '';
   }
 
@@ -396,7 +398,7 @@
     $('#bluff-round').textContent = `الجولة ${AR_NUM(s.round)}/${AR_NUM(s.totalRounds)}`;
     $('#bluff-question').textContent = q.text || '';
     $('#bluff-glass').innerHTML = Art.hourglass();
-    $('#bluff-mascot').innerHTML = Art.mascot('sneaky');
+    $('#bluff-done').innerHTML = Art.uiIcon('check');
 
     const b = s.bluff || {};
     $('#bluff-counter').innerHTML = Art.uiIcon('pen') + `<span>${AR_NUM(b.submittedCount || 0)}/${AR_NUM(b.total || 0)}</span>`;
@@ -470,11 +472,11 @@
     });
 
     if (v.wroteExact) {
-      $('#vote-hint').textContent = 'صدفة حلوة! كتبت الجواب الصحيح، خذيت نقطة 🎯';
+      $('#vote-hint').textContent = 'صدفة حلوة! كتبت الجواب الصحيح، خذيت نقطة';
     } else if (v.votedAnswerId) {
       $('#vote-hint').textContent = 'صوتك وصل! ننتظر الباقين...';
     } else {
-      $('#vote-hint').textContent = 'ما تكدر تصوت على جوابك انته 😉';
+      $('#vote-hint').textContent = 'ما تكدر تصوت على جوابك انته';
     }
   }
 
@@ -500,7 +502,7 @@
       item.style.animationDelay = (i * 90) + 'ms';
 
       const authors = a.isCorrect
-        ? '<span class="mini-tag author">🎯 هاي الحقيقة</span>'
+        ? '<span class="mini-tag author">هاي الحقيقة</span>'
         : a.ownerIds.map(id => {
             const p = playerById(id);
             if (!p) return '';
@@ -519,7 +521,7 @@
         `<div class="reveal-meta"><span class="meta-label">${a.isCorrect ? '' : 'كتبه:'}</span>${authors}</div>` +
         (voters
           ? `<div class="reveal-meta"><span class="meta-label">صوّت له:</span>${voters}</div>`
-          : `<div class="reveal-meta"><span class="meta-label">محد صوت له 😴</span></div>`);
+          : `<div class="reveal-meta"><span class="meta-label">محد صوت له</span></div>`);
 
       list.appendChild(item);
     });
@@ -529,7 +531,7 @@
       const names = r.exactIds.map(id => (playerById(id) || {}).name).filter(Boolean).join('، ');
       if (names) {
         const item = el('div', 'reveal-item correct',
-          `<div class="rtext">🎯 ${esc(names)} كتب الجواب الصحيح بالصدفة! +١</div>`);
+          `<div class="rtext">${esc(names)} كتب الجواب الصحيح بالصدفة! +1</div>`);
         list.appendChild(item);
       }
     }
@@ -557,7 +559,7 @@
       row.innerHTML =
         `<span class="rankn">${AR_NUM(i + 1)}</span>` +
         avatarOf(p) +
-        `<span class="sname">${esc(p.name)}${p.connected ? '' : ' 🔌'}</span>` +
+        `<span class="sname">${esc(p.name)}${p.connected ? '' : ' (منقطع)'}</span>` +
         (g > 0 ? `<span class="sgain">+${AR_NUM(g)}</span>` : '') +
         `<span class="spts">${AR_NUM(p.score)}</span>`;
       container.appendChild(row);
@@ -568,7 +570,7 @@
   function renderFinal(s, phaseChanged) {
     const f = s.final || { ranking: [], winnerIds: [] };
     const iWon = f.winnerIds.includes(s.youId);
-    $('#final-mascot').innerHTML = Art.mascot(iWon ? 'party' : 'happy');
+    $('#final-cup').innerHTML = Art.uiIcon('trophy');
 
     const winners = f.ranking.filter(p => f.winnerIds.includes(p.id));
     const cup = Art.uiIcon('trophy');
@@ -593,9 +595,9 @@
       const pod = el('div', 'pod p' + (idx + 1));
       pod.style.animationDelay = (i * 130) + 'ms';
       pod.innerHTML =
-        Art.avatarSVG(p.avatar).replace('<svg ', '<svg class="av" ') +
+        Art.avatarSVG(p.avatar, p.name).replace('<svg ', '<svg class="av" ') +
         `<div class="pname">${esc(p.name)}</div>` +
-        `<div class="block">${Art.uiIcon('medal', idx + 1)}<span>${AR_NUM(p.score)}</span></div>`;
+        `<div class="block"><span class="prank">#${idx + 1}</span><span class="pscore">${AR_NUM(p.score)}</span></div>`;
       podium.appendChild(pod);
     });
 
@@ -607,7 +609,7 @@
       row.style.animationDelay = (i * 70) + 'ms';
       row.innerHTML =
         `<span class="rankn">${AR_NUM(p.rank)}</span>` +
-        Art.avatarSVG(p.avatar) +
+        Art.avatarSVG(p.avatar, p.name) +
         `<span class="sname">${esc(p.name)}</span>` +
         `<span class="spts">${AR_NUM(p.score)}</span>`;
       box.appendChild(row);
@@ -666,12 +668,12 @@
           await navigator.share({ title: 'الأجوبة الكاذبة', text: shareText, url });
         } else {
           await navigator.clipboard.writeText(url);
-          toast('انتسخ الرابط! ارسله لأصحابك 🔗', 'join');
+          toast('انتسخ الرابط! ارسله لأصحابك', 'join');
         }
       } catch {
         try {
           await navigator.clipboard.writeText(url);
-          toast('انتسخ الرابط! 🔗', 'join');
+          toast('انتسخ الرابط!', 'join');
         } catch { toast('الرابط: ' + url, 'info', 5000); }
       }
     });
@@ -734,6 +736,13 @@
     $('#btn-rules').addEventListener('click', openRules);
     $('#btn-rules-back').addEventListener('click', closeRules);
     $('#btn-rules-close').addEventListener('click', closeRules);
+
+    // ---------- أفاتار الحروف يتحدث وانته تكتب اسمك ----------
+    let nameTimer = null;
+    $('#input-name').addEventListener('input', () => {
+      clearTimeout(nameTimer);
+      nameTimer = setTimeout(buildAvatarPicker, 120);
+    });
 
     // ---------- عدّاد حروف الجواب ----------
     const bluffInput = $('#input-bluff');

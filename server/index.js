@@ -128,7 +128,12 @@ io.on('connection', (socket) => {
     if (!room) return ack(cb, { error: 'مو داخل غرفة' });
     const p = room.players.get(socket.data.playerId);
     if (!p) return ack(cb, { error: 'مو موجود بالغرفة' });
-    if (payload.avatar && AVATARS.includes(payload.avatar)) p.avatar = payload.avatar;
+    // لو اللون مأخوذ من لاعب ثاني، ما ننطيه ياه
+    if (payload.avatar && AVATARS.includes(payload.avatar)) {
+      const taken = room.playerList.some(o => o.id !== p.id && o.avatar === payload.avatar);
+      if (taken) return ack(cb, { error: 'هذا اللون مأخوذ، اختار لون ثاني' });
+      p.avatar = payload.avatar;
+    }
     if (payload.name) {
       const n = cleanText(payload.name, CONFIG.MAX_NAME_LEN);
       if (n && n !== p.name) {

@@ -191,26 +191,38 @@ input::placeholder{color:var(--hint);}
 .join-row .btn{width:auto; flex:0 0 96px; padding:var(--s3);}
 
 /* ============================================================
-   الماسكوت
+   عناصر الهوية (بدون شخصيات كرتونية)
    ============================================================ */
-.mascot svg{display:block; width:100%; height:100%; overflow:visible;}
-.mascot-lg{width:156px; height:170px; margin:0 auto;}
-.mascot-sm{width:66px; height:72px; flex:0 0 66px;}
-.home-hero{text-align:center; padding-top:var(--s3);}
+.home-hero{text-align:center; padding-top:var(--s7);}
+.hero-badge{
+  display:inline-block; background:var(--green-l); color:var(--green-t);
+  font-size:var(--fs-xs); font-weight:700; letter-spacing:.6px;
+  padding:var(--s1) var(--s4); border-radius:var(--r-full); margin-bottom:var(--s3);
+}
 
-/* حركة تنفس + ميلان خفيف — تحس الشخصية حية بدون إزعاج */
-.bounce{animation:breathe 3.4s var(--ease-soft) infinite;}
-@keyframes breathe{
-  0%,100%{transform:translateY(0) scale(1);}
-  50%{transform:translateY(-9px) scale(1.02);}
+/* علامة صح بدائرة خضراء — بعد ما يرسل جوابه */
+.done-mark{
+  width:56px; height:56px; margin:0 auto; border-radius:50%;
+  background:var(--green-l); display:grid; place-items:center;
+  animation:pop-in .45s var(--ease-pop);
 }
-.wiggle{animation:tilt 3.6s var(--ease-soft) infinite;}
-@keyframes tilt{0%,100%{transform:rotate(-4deg);}50%{transform:rotate(4deg);}}
-.party{animation:cheer .7s var(--ease-pop) infinite;}
-@keyframes cheer{
-  0%,100%{transform:scale(1) rotate(-3deg) translateY(0);}
-  50%{transform:scale(1.07) rotate(3deg) translateY(-6px);}
+.done-mark svg{width:30px; height:30px;}
+
+/* كأس شاشة النهاية */
+.final-cup{
+  width:76px; height:76px; margin:0 auto var(--s3); border-radius:50%;
+  background:var(--yellow-l); display:grid; place-items:center;
+  animation:pop-in .55s var(--ease-pop);
 }
+.final-cup svg{width:42px; height:42px;}
+
+/* دوّار التحميل */
+.spinner{
+  width:38px; height:38px; margin:0 auto; border-radius:50%;
+  border:4px solid var(--border); border-top-color:var(--blue);
+  animation:spin .8s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg);}}
 
 /* ============================================================
    اختيار الأفاتار
@@ -219,14 +231,14 @@ input::placeholder{color:var(--hint);}
 .avatar-opt{
   aspect-ratio:1; border:3px solid transparent; border-radius:50%; padding:0;
   background:#fff; cursor:pointer; overflow:hidden; position:relative;
-  transition:border-color .2s, transform .22s var(--ease-pop), filter .2s;
-  filter:saturate(.8);
+  transition:border-color .2s, transform .22s var(--ease-pop), opacity .2s;
+  opacity:.55;
 }
 .avatar-opt svg{width:100%; height:100%; display:block;}
-.avatar-opt:hover{filter:none; transform:scale(1.06);}
+.avatar-opt:hover{opacity:1; transform:scale(1.06);}
 .avatar-opt.selected{
-  border-color:var(--blue); filter:none;
-  transform:scale(1.12); box-shadow:0 0 0 3px var(--blue-l);
+  border-color:var(--text); opacity:1;
+  transform:scale(1.12);
 }
 
 /* ============================================================
@@ -306,7 +318,7 @@ input::placeholder{color:var(--hint);}
    اللوبي
    ============================================================ */
 .lobby-card{border:0; padding:0;}
-.lobby-head{display:flex; align-items:center; gap:var(--s4); margin-bottom:var(--s5);}
+.lobby-head{margin-bottom:var(--s5);}
 .lobby-head h2{margin-bottom:var(--s1);}
 
 .players-grid{display:flex; flex-direction:column; gap:var(--s2); margin-bottom:var(--s5);}
@@ -381,7 +393,7 @@ input::placeholder{color:var(--hint);}
 /* ============================================================
    الفئات
    ============================================================ */
-.chooser-banner{display:flex; align-items:center; gap:var(--s4); margin-bottom:var(--s5);}
+.chooser-banner{margin-bottom:var(--s5);}
 .chooser-banner h2{font-size:var(--fs-lg); margin:0;}
 .category-grid{display:grid; grid-template-columns:1fr 1fr; gap:var(--s3);}
 .cat-card{
@@ -391,10 +403,15 @@ input::placeholder{color:var(--hint);}
   transition:border-color .2s, background .2s, transform .1s var(--ease-soft);
   animation:item-in .42s var(--ease-pop) backwards;
 }
-.cat-card svg{width:66px; height:66px; margin:0 auto var(--s3); display:block; transition:transform .3s var(--ease-pop);}
-.cat-card .cname{font-weight:700; font-size:var(--fs-sm); line-height:1.45;}
-.cat-card:not(.locked):hover{border-color:var(--blue); background:var(--blue-l);}
-.cat-card:not(.locked):hover svg{transform:scale(1.12) rotate(-4deg);}
+.cat-card{background:var(--tint,#fff);}
+.cat-bar{
+  display:block; width:44px; height:6px; border-radius:var(--r-full);
+  background:var(--accent,var(--blue)); margin:0 auto var(--s4);
+  transition:width .3s var(--ease-pop);
+}
+.cat-card .cname{font-weight:700; font-size:var(--fs-md); line-height:1.5;}
+.cat-card:not(.locked):hover{border-color:var(--accent,var(--blue));}
+.cat-card:not(.locked):hover .cat-bar{width:64px;}
 .cat-card:not(.locked):active{transform:translateY(3px); border-bottom-width:2px;}
 .cat-card.locked{cursor:default;}
 .cat-card.chosen{
@@ -412,9 +429,11 @@ input::placeholder{color:var(--hint);}
   text-align:start; color:var(--text);
 }
 .question-card.big{font-size:var(--fs-xl); padding:var(--s6) var(--s5); text-align:center;}
-.intro-cat{margin-bottom:var(--s4); text-align:center; animation:pop-in .5s var(--ease-pop);}
-.intro-cat svg{width:82px; height:82px; margin:0 auto var(--s2);}
-.intro-cat .label{color:var(--muted); font-weight:700; font-size:var(--fs-sm);}
+.intro-cat{margin-bottom:var(--s5); text-align:center; animation:pop-in .5s var(--ease-pop);}
+.cat-chip{
+  display:inline-block; font-weight:700; font-size:var(--fs-sm);
+  padding:var(--s2) var(--s5); border-radius:var(--r-full);
+}
 .intro-note{color:var(--hint); font-weight:600; margin-top:var(--s6); font-size:var(--fs-md);}
 #intro-question{animation:item-in .5s var(--ease-pop) .12s backwards;}
 
@@ -429,8 +448,7 @@ input::placeholder{color:var(--hint);}
   text-align:center; background:var(--bg-alt); border-radius:var(--r-lg);
   padding:var(--s6) var(--s5); margin-top:var(--s5); animation:pop-in .45s var(--ease-pop);
 }
-.waiting-box p{font-weight:700; margin:var(--s3) 0; color:var(--muted); font-size:var(--fs-sm);}
-.waiting-box .mascot{margin:0 auto;}
+.waiting-box p{font-weight:700; margin:var(--s4) 0 var(--s3); color:var(--muted); font-size:var(--fs-sm);}
 .your-answer{
   background:#fff; border:2px solid var(--border); border-radius:var(--r-sm);
   padding:var(--s3) var(--s4); font-weight:700; display:inline-block;
@@ -544,7 +562,8 @@ input::placeholder{color:var(--hint);}
   display:flex; flex-direction:column; align-items:center; justify-content:center; gap:var(--s1);
   font-weight:800; font-size:var(--fs-lg); color:#fff;
 }
-.pod .block svg{width:26px; height:26px;}
+.pod .prank{font-size:var(--fs-xs); font-weight:700; opacity:.75; line-height:1;}
+.pod .pscore{font-size:var(--fs-xl); font-weight:800; line-height:1.1;}
 .pod.p1 .block{height:100px; background:var(--yellow);}
 .pod.p2 .block{height:74px; background:#c6cbd1;}
 .pod.p3 .block{height:58px; background:#e0a06a;}
@@ -578,8 +597,7 @@ input::placeholder{color:var(--hint);}
 .overlay{position:fixed; inset:0; background:rgba(255,255,255,.94); z-index:70; display:grid; place-items:center; padding:var(--s6);}
 .overlay[hidden]{display:none;}
 .overlay-box{text-align:center; max-width:320px; animation:pop-in .4s var(--ease-pop);}
-.overlay-box p{font-weight:700; margin:var(--s3) 0 0; color:var(--muted);}
-.overlay-box .mascot{margin:0 auto;}
+.overlay-box p{font-weight:700; margin:var(--s4) 0 0; color:var(--muted);}
 
 /* ============================================================
    الكونفيتي والنجوم

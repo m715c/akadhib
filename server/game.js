@@ -27,7 +27,8 @@ const CONFIG = {
 const CODE_ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
 const CODE_LENGTH = 5;
 
-const AVATARS = ['fox', 'cat', 'panda', 'frog', 'lion', 'owl', 'penguin', 'bear', 'monkey', 'unicorn', 'pig', 'shark'];
+// ألوان الأفاتار (أفاتار = دائرة ملونة بأول حرف من الاسم)
+const AVATARS = ['blue', 'green', 'purple', 'orange', 'red', 'teal', 'pink', 'indigo', 'amber', 'lime', 'cyan', 'rose'];
 
 // أجوبة احتياطية للاعب اللي ما يكتب بالوكت (ما تنطي نقاط لصاحبها)
 const FILLERS = [
@@ -153,11 +154,19 @@ class Room {
     this.lastActivity = Date.now();
   }
 
+  // لون مو مستخدم بالغرفة، حتى ما يتشابه لاعبين
+  freeAvatar(preferred) {
+    const taken = new Set(this.playerList.map(p => p.avatar));
+    if (AVATARS.includes(preferred) && !taken.has(preferred)) return preferred;
+    const free = AVATARS.filter(a => !taken.has(a));
+    return free.length ? pick(free) : (AVATARS.includes(preferred) ? preferred : pick(AVATARS));
+  }
+
   addPlayer({ playerId, name, avatar, socketId }) {
     const p = {
       id: playerId || newId('p'),
       name: cleanText(name, CONFIG.MAX_NAME_LEN) || 'لاعب',
-      avatar: AVATARS.includes(avatar) ? avatar : pick(AVATARS),
+      avatar: this.freeAvatar(avatar),
       score: 0,
       seat: this.seat++,
       connected: true,
